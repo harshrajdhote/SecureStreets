@@ -160,7 +160,7 @@
         },
       });
       
-    map.addSource("theRoute", {
+      map.addSource("theRoute", {     //green route
       type: "geojson",
       data: {
        type: "Feature",
@@ -176,7 +176,81 @@
          "line-cap": "round",
        },
        paint: {
-         "line-color": "#cccccc",
+         "line-color": "#008000",
+         "line-opacity": 0.5,
+         "line-width": 13,
+         "line-blur": 0.5,
+       },
+     });
+
+
+
+
+    map.addSource("BestRouteGreen", {     //green route
+      type: "geojson",
+      data: {
+       type: "Feature",
+      },
+    });
+
+     map.addLayer({
+       id: "BestRouteGreen",
+       type: "line",
+       source: "BestRouteGreen",
+       layout: {
+         "line-join": "round",
+         "line-cap": "round",
+       },
+       paint: {
+         "line-color": "#008000",
+         "line-opacity": 0.5,
+         "line-width": 13,
+         "line-blur": 0.5,
+       },
+     });
+
+
+     map.addSource("AltRouteYellow", {     //green route
+      type: "geojson",
+      data: {
+       type: "Feature",
+      },
+    });
+
+     map.addLayer({
+       id: "AltRouteYellow",
+       type: "line",
+       source: "AltRouteYellow",
+       layout: {
+         "line-join": "round",
+         "line-cap": "round",
+       },
+       paint: {
+         "line-color": "#FFFF00",
+         "line-opacity": 0.5,
+         "line-width": 13,
+         "line-blur": 0.5,
+       },
+     });
+
+
+     map.addSource("AltRouteRed", {     //green route
+      type: "geojson",
+      data: {
+       type: "Feature",
+      },
+    });
+
+     map.addLayer({
+       id: "AltRouteRed",
+       type: "line",
+       source: "AltRouteRed",
+       layout: {
+         "line-join": "round",
+         "line-cap": "round",
+       },
+       paint: {
+         "line-color": "#FF0000",
          "line-opacity": 0.5,
          "line-width": 13,
          "line-blur": 0.5,
@@ -379,22 +453,36 @@
       
        );
       console.log(finalPathSet);
-      var card = document.createElement("div");
-      card.className = "card";
-      // Add the response to the individual report created above
-      var heading = document.createElement("div");
-      heading.className = "card-header no-route";
-      emoji = '🛑';
-      heading.innerHTML = emoji + " Ending search.";
+      map.setLayoutProperty("BestRouteGreen", "visibility", "visible");
+      map.getSource("BestRouteGreen").setData(finalPathSet[0].routeGeometry);
+      map.setLayoutProperty("AltRouteYellow", "visibility", "visible");
+      map.getSource("AltRouteYellow").setData(finalPathSet[1].routeGeometry);
+      map.setLayoutProperty("AltRouteRed", "visibility", "visible");
+      map.getSource("AltRouteRed").setData(finalPathSet[2].routeGeometry);
 
-      // Add details to the individual report
-      var details = document.createElement("div");
-      details.className = "card-details";
-      details.innerHTML = "No clear route found in " + counter + " tries.";
+      map.setLayoutProperty("theRoute", "visibility", "none");
 
-      card.appendChild(heading);
-      card.appendChild(details);
-      element.insertBefore(card, element.firstChild);
+
+      // var card = document.createElement("div");
+      // card.className = "card";
+      // // Add the response to the individual report created above
+      // var heading = document.createElement("div");
+      // heading.className = "card-header no-route";
+      // emoji = '🛑';
+      // heading.innerHTML = emoji + " Ending search.";
+
+      // // Add details to the individual report
+      // var details = document.createElement("div");
+      // details.className = "card-details";
+      // details.innerHTML = "No clear route found in " + counter + " tries.";
+
+      // card.appendChild(heading);
+      // card.appendChild(details);
+      // element.insertBefore(card, element.firstChild);
+      reports.innerHTML = "";
+      addCard(1, reports, true, "takes " + finalPathSet[0].routeTime + " minutes and danger index is "+finalPathSet[0].routeDangerIndex);
+      addCard(2, reports, true,"takes " + finalPathSet[1].routeTime + " minutes and danger index is "+finalPathSet[1].routeDangerIndex);
+      addCard(3, reports, true, "takes " + finalPathSet[2].routeTime + " minutes and danger index is "+finalPathSet[2].routeDangerIndex);
     };
     
     directions.on("clear", function() {
@@ -417,7 +505,7 @@
       let pathDangerIndex = 0;
       if(pathCASet.size != 0){
       pathCASet.forEach((pathCA) => {
-        pathCrimeIndexSum += CACrimeIndexMapping.get(+pathCA);
+        pathCrimeIndexSum += CACrimeIndexMapping.get(+pathCA-1);
         // console.log( CACrimeIndexMapping.get(+(pathCA)))
         });
       
@@ -475,10 +563,11 @@
             // by a factor of the attempt count
             polygon = turf.transformScale(polygon, counter * 0.02);  //updates prior 0.01
             bbox = turf.bbox(polygon);
-            collision = "is bad.";
+            
+            collision = "";
             detail =
               "takes " + (e.duration / 60).toFixed(0) + " minutes and danger index is "+pathDangerIndex;
-            emoji = "⚠️";
+            emoji = "✔️";
             map.setPaintProperty("theRoute", "line-color", "#de2d26");
             
             // Add a randomly selected waypoint to get a new route from the Directions API
