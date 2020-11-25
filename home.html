@@ -3,7 +3,7 @@
 
 <head>
   <meta charset="utf-8" />
-  <title>Route finder</title>
+  <title>SafeStreets</title>
   <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no" />
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 
@@ -22,6 +22,10 @@
   <!-- Main Style -->
   <link href="CSS/style.css" rel="stylesheet" />
   
+  <!-- ca to danger index mapping js -->
+  <script src="./Js/danger_index_mapping.js"></script>
+
+  
 </head>
 
 <body>
@@ -31,427 +35,46 @@
     <h1>Route Status</h1>
     <div id="reports"></div>
   </div>
-
+  <!-- map initialization & layers js -->
+  <script src="./Js/map_init_layers.js"></script>
+  <!-- path cost finder js -->
+  <script src="./Js/cost_finder.js"></script>
   <script> 
-   
-
-// Map & Directions Intialization Section
-
-    mapboxgl.accessToken = "pk.eyJ1IjoiZGhvdGVoYXJzaHJhaiIsImEiOiJjanczczFxdmQwaWxqNDhxcTA5dXF2NDNsIn0.SpRrT-_v7oylFpY96UG34Q";
-    var map = new mapboxgl.Map({
-      container: "map", // Specify the container ID
-      style: "mapbox://styles/mapbox/dark-v10", // Specify which map style to use
-      center: [-87.746010,41.812267], // Specify the starting position [lng, lat]
-      zoom: 10 ,// Specify the starting zoom
-      geometries: "geojson",
-      // maxBounds : [[-94.192919,46.980252],[-86.585303,36.597889]]
-    });
-    
-    var directions = new MapboxDirections({
-      accessToken: mapboxgl.accessToken,
-      unit: "metric",
-      profile: "mapbox/driving",
-      alternatives: false,
-      geometries: "geojson",
-      controls: { instructions: false },
-      flyTo: false
-    });
-
-
-// Map controls & layers section
-
-    map.addControl(directions, "top-right");
-    map.scrollZoom.enable();
-    
-    var clearances = {
-      type: "FeatureCollection",
-      features: [
-        {
-          type: "Feature",
-          geometry: {
-            type: "Point",
-            coordinates: [-84.47426, 38.06673],
-          },
-          properties: {
-            clearance: "13' 2",
-          },
-        },
-        {
-          type: "Feature",
-          geometry: {
-            type: "Point",
-            coordinates: [-84.47208, 38.06694],
-          },
-          properties: {
-            clearance: "13' 7",
-          },
-        },
-        {
-          type: "Feature",
-          geometry: {
-            type: "Point",
-            coordinates: [-84.60485, 38.12184],
-          },
-          properties: {
-            clearance: "13' 7",
-          },
-        },
-        {
-          type: "Feature",
-          geometry: {
-            type: "Point",
-            coordinates: [-84.61905, 37.87504],
-          },
-          properties: {
-            clearance: "12' 0",
-          },
-        },
-        {
-          type: "Feature",
-          geometry: {
-            type: "Point",
-            coordinates: [-84.55946, 38.30213],
-          },
-          properties: {
-            clearance: "13' 6",
-          },
-        },
-        {
-          type: "Feature",
-          geometry: {
-            type: "Point",
-            coordinates: [-84.27235, 38.04954],
-          },
-          properties: {
-            clearance: "13' 6",
-          },
-        },
-        {
-          type: "Feature",
-          geometry: {
-            type: "Point",
-            coordinates: [-84.27264, 37.82917],
-          },
-          properties: {
-            clearance: "11' 6",
-          },
-        }
-      ]
-    };
-    
-    var obstacle = turf.buffer(clearances, 0.25, { units: "kilometers" });
-    var bbox = [0, 0, 0, 0];
-    var polygon = turf.bboxPolygon(bbox);
-    
-    map.on("load", function () {
-
-      map.addLayer({
-        id: "clearances",
-        type: "fill",
-        source: {
-          type: "geojson",
-          data: obstacle,
-        },
-        layout: {},
-        paint: {
-          "fill-color": "#f03b20",
-          "fill-opacity": 0.5,
-          "fill-outline-color": "#f03b20",
-        },
-      });
-      
-      map.addSource("theRoute", {     //green route
-      type: "geojson",
-      data: {
-       type: "Feature",
-      },
-    });
-
-     map.addLayer({
-       id: "theRoute",
-       type: "line",
-       source: "theRoute",
-       layout: {
-         "line-join": "round",
-         "line-cap": "round",
-       },
-       paint: {
-         "line-color": "#008000",
-         "line-opacity": 0.5,
-         "line-width": 13,
-         "line-blur": 0.5,
-       },
-     });
-
-
-
-
-    map.addSource("BestRouteGreen", {     //green route
-      type: "geojson",
-      data: {
-       type: "Feature",
-      },
-    });
-
-     map.addLayer({
-       id: "BestRouteGreen",
-       type: "line",
-       source: "BestRouteGreen",
-       layout: {
-         "line-join": "round",
-         "line-cap": "round",
-       },
-       paint: {
-         "line-color": "#008000",
-         "line-opacity": 0.5,
-         "line-width": 13,
-         "line-blur": 0.5,
-       },
-     });
-
-
-     map.addSource("AltRouteYellow", {     //green route
-      type: "geojson",
-      data: {
-       type: "Feature",
-      },
-    });
-
-     map.addLayer({
-       id: "AltRouteYellow",
-       type: "line",
-       source: "AltRouteYellow",
-       layout: {
-         "line-join": "round",
-         "line-cap": "round",
-       },
-       paint: {
-         "line-color": "#FFFF00",
-         "line-opacity": 0.5,
-         "line-width": 13,
-         "line-blur": 0.5,
-       },
-     });
-
-
-     map.addSource("AltRouteRed", {     //green route
-      type: "geojson",
-      data: {
-       type: "Feature",
-      },
-    });
-
-     map.addLayer({
-       id: "AltRouteRed",
-       type: "line",
-       source: "AltRouteRed",
-       layout: {
-         "line-join": "round",
-         "line-cap": "round",
-       },
-       paint: {
-         "line-color": "#FF0000",
-         "line-opacity": 0.5,
-         "line-width": 13,
-         "line-blur": 0.5,
-       },
-     });
-
-     // Source and layer for the bounding box
-     map.addSource("theBox", {
-       type: "geojson",
-       data: {
-         type: "Feature"
-       }
-     });
-     map.addLayer({
-       id: "theBox",
-       type: "fill",
-       source: "theBox",
-       layout: {},
-       paint: {
-         "fill-color": "#FFC300",
-         "fill-opacity": 0.5,
-         "fill-outline-color": "#FFC300"
-       }
-     });
-    });
-
 
 // User defined Section
-
-   let CACrimeIndexMapping = new Map();
-   //cluster 0
-   CACrimeIndexMapping.set(4,1);
-   CACrimeIndexMapping.set(8,1);
-   CACrimeIndexMapping.set(9,1);
-   CACrimeIndexMapping.set(10,1);
-   CACrimeIndexMapping.set(11,1);
-   CACrimeIndexMapping.set(12,1);
-   CACrimeIndexMapping.set(17,1);
-   CACrimeIndexMapping.set(19,1);
-   CACrimeIndexMapping.set(33,1);
-   CACrimeIndexMapping.set(35,1);
-   CACrimeIndexMapping.set(36,1);
-   CACrimeIndexMapping.set(38,1);
-   CACrimeIndexMapping.set(40,1);
-   CACrimeIndexMapping.set(44,1);
-   CACrimeIndexMapping.set(46,1);
-   CACrimeIndexMapping.set(47,1);
-   CACrimeIndexMapping.set(49,1);
-   CACrimeIndexMapping.set(51,1);
-   CACrimeIndexMapping.set(53,1);
-   CACrimeIndexMapping.set(54,1);
-   CACrimeIndexMapping.set(56,1);
-   CACrimeIndexMapping.set(58,1);
-   CACrimeIndexMapping.set(59,1);
-   CACrimeIndexMapping.set(61,1);
-   CACrimeIndexMapping.set(63,1);
-   CACrimeIndexMapping.set(71,1);
-   CACrimeIndexMapping.set(73,1);
-   CACrimeIndexMapping.set(74,1);
-   //cluster 1
-   CACrimeIndexMapping.set(22,5);
-   CACrimeIndexMapping.set(25,5);
-   CACrimeIndexMapping.set(28,5);
-   CACrimeIndexMapping.set(42,5);
-   CACrimeIndexMapping.set(48,5);
-   CACrimeIndexMapping.set(66,5);
-   CACrimeIndexMapping.set(67,5);
-   CACrimeIndexMapping.set(68,5);
-   CACrimeIndexMapping.set(70,5);
-
-  //cluster 2
-  CACrimeIndexMapping.set(18,3);
-  CACrimeIndexMapping.set(21,3);
-  CACrimeIndexMapping.set(23,3);
-  CACrimeIndexMapping.set(26,3);
-  CACrimeIndexMapping.set(29,3);
-  CACrimeIndexMapping.set(43,3);
-  CACrimeIndexMapping.set(45,3);
-  CACrimeIndexMapping.set(52,3);
-  CACrimeIndexMapping.set(60,3);
-  CACrimeIndexMapping.set(65,3);
-
-  //cluster 3
-  CACrimeIndexMapping.set(0,2);
-  CACrimeIndexMapping.set(1,2);
-  CACrimeIndexMapping.set(2,2);
-  CACrimeIndexMapping.set(3,2);
-  CACrimeIndexMapping.set(6,2);
-  CACrimeIndexMapping.set(13,2);
-  CACrimeIndexMapping.set(14,2);
-  CACrimeIndexMapping.set(15,2);
-  CACrimeIndexMapping.set(16,2);
-  CACrimeIndexMapping.set(20,2);
-  CACrimeIndexMapping.set(30,2);
-  CACrimeIndexMapping.set(32,2);
-  CACrimeIndexMapping.set(34,2);
-  CACrimeIndexMapping.set(37,2);
-  CACrimeIndexMapping.set(39,2);
-  CACrimeIndexMapping.set(41,2);
-  CACrimeIndexMapping.set(50,2);
-  CACrimeIndexMapping.set(55,2);
-  CACrimeIndexMapping.set(57,2);
-  CACrimeIndexMapping.set(62,2);
-  CACrimeIndexMapping.set(64,2);
-  CACrimeIndexMapping.set(69,2);
-  CACrimeIndexMapping.set(72,2);
-  CACrimeIndexMapping.set(75,2);
-  CACrimeIndexMapping.set(76,2);
-
-  //cluster 4
-  CACrimeIndexMapping.set(5,4);
-  CACrimeIndexMapping.set(7,4);
-  CACrimeIndexMapping.set(27,4);
-  CACrimeIndexMapping.set(31,4);
-
-  //cluster 5
-  CACrimeIndexMapping.set(24,6);
-
-  //Not found case
-  CACrimeIndexMapping.set(-1,3);
-
-  console.log(CACrimeIndexMapping);
-
-
-
-
-
-   let finalPathSet = [];
-   let zonePolyListFile;
-   jQuery.getJSON("https://raw.githubusercontent.com/harshrajdhote/Node_Rest_APIs/master/Boundaries%20-%20Community%20Areas%20(current).geojson",(data)=>{
-    zonePolyListFile = data;
-    } );
-  
-    function getRouteCost(routeGeometry)
-    {
-      let zonePolyList = zonePolyListFile.features;
-      let pointsOnRoute = routeGeometry;
-      let zoneSet = new Set();
-      pointsOnRoute.forEach(pointsOnRouteElement => {
-        zonePolyList.forEach(zonePolyListElement => {
-          let zoneShape = (zonePolyListElement.geometry.coordinates[0])[0];
-          let zonePolygon = turf.polygon([zoneShape],{name:'poly1'});
-          if(turf.booleanPointInPolygon(turf.point([pointsOnRouteElement[1],pointsOnRouteElement[0]]),zonePolygon)){
-          zoneSet.add(zonePolyListElement.properties.area_num_1);
-          }
-        })
-        // console.log("result",zoneSet);
-
-      });
-
-      return zoneSet;
-    }
-
-
-
-    
     var counter = 0;
-    var maxAttempts = 20;
-    var emoji = '';
-    var collision = '';
+    var maxAttempts = 3; //possible path set
+    var emoji = '⚠️';
     
-    var addCard = function(id, element, clear, detail) {
+    var addCard = function(id, element, detail) {
       var card = document.createElement("div");
       card.className = "card";
       // Add the response to the individual report created above
       var heading = document.createElement("div");
-      // Set the class type based on clear value
-      if (clear == true) {
       heading.className = "card-header route-found";
-    } else {
-      heading.className = "card-header obstacle-found";
-      }
-
       if (id == 0) {
-        heading.innerHTML = emoji + " The route " + collision;
+        heading.innerHTML = emoji + "No Route Found";
       } else {
-        heading.innerHTML = emoji + " Route " + id + ' ' + collision;
+        heading.innerHTML = emoji + " Route " + id + ' ';
       }
 
       var details = document.createElement("div");
       details.className = "card-details";
-      details.innerHTML = "This " + detail + " obstacles.";
-
+      details.innerHTML = "This " + detail;
       card.appendChild(heading);
       card.appendChild(details);
       element.insertBefore(card, element.firstChild);
     };
     
-    var noRoutes = function(element) {
+    var showResult = function(element) {
       finalPathSet.sort(
       function(path1,path2) {          
       if (path1.routeDangerIndex === path2.routeDangerIndex) {
-         // Price is only important when cities are the same
+         // danger index is only important when path are the same
          return path1.routeDistance - path2.routeDistance;
       }
       return path1.routeDangerIndex > path2.routeDangerIndex ? 1 : -1;
-   }
-      
-      
-      
-       );
+      });  //custom sort
       console.log(finalPathSet);
       map.setLayoutProperty("BestRouteGreen", "visibility", "visible");
       map.getSource("BestRouteGreen").setData(finalPathSet[0].routeGeometry);
@@ -459,46 +82,23 @@
       map.getSource("AltRouteYellow").setData(finalPathSet[1].routeGeometry);
       map.setLayoutProperty("AltRouteRed", "visibility", "visible");
       map.getSource("AltRouteRed").setData(finalPathSet[2].routeGeometry);
-
       map.setLayoutProperty("theRoute", "visibility", "none");
-
-
-      // var card = document.createElement("div");
-      // card.className = "card";
-      // // Add the response to the individual report created above
-      // var heading = document.createElement("div");
-      // heading.className = "card-header no-route";
-      // emoji = '🛑';
-      // heading.innerHTML = emoji + " Ending search.";
-
-      // // Add details to the individual report
-      // var details = document.createElement("div");
-      // details.className = "card-details";
-      // details.innerHTML = "No clear route found in " + counter + " tries.";
-
-      // card.appendChild(heading);
-      // card.appendChild(details);
-      // element.insertBefore(card, element.firstChild);
       reports.innerHTML = "";
-      addCard(1, reports, true, "takes " + finalPathSet[0].routeTime + " minutes and danger index is "+finalPathSet[0].routeDangerIndex);
-      addCard(2, reports, true,"takes " + finalPathSet[1].routeTime + " minutes and danger index is "+finalPathSet[1].routeDangerIndex);
-      addCard(3, reports, true, "takes " + finalPathSet[2].routeTime + " minutes and danger index is "+finalPathSet[2].routeDangerIndex);
+      addCard(3, reports, "takes " + finalPathSet[2].routeTime + " minutes and danger index is "+finalPathSet[2].routeDangerIndex);
+      addCard(2, reports, "takes " + finalPathSet[1].routeTime + " minutes and danger index is "+finalPathSet[1].routeDangerIndex);
+      addCard(1, reports, "takes " + finalPathSet[0].routeTime + " minutes and danger index is "+finalPathSet[0].routeDangerIndex);  
     };
     
     directions.on("clear", function() {
-
       map.setLayoutProperty("theRoute", "visibility", "none");
       map.setLayoutProperty("theBox", "visibility", "none");
-
       counter = 0;
       reports.innerHTML = "";
-
     });
     
-    directions.on("route", function(e) {
+    directions.on("route", function(e) {    //called for each individual path
       var reports = document.getElementById("reports");
       var routes = e.route;
-      // console.log(routes.geometries);
       let pathCASet = getRouteCost(polyline.decode(routes[0].geometry)); //getRouteCost
       let pathCrimeIndexSum = 0;
       console.log(pathCrimeIndexSum);
@@ -506,9 +106,7 @@
       if(pathCASet.size != 0){
       pathCASet.forEach((pathCA) => {
         pathCrimeIndexSum += CACrimeIndexMapping.get(+pathCA-1);
-        // console.log( CACrimeIndexMapping.get(+(pathCA)))
-        });
-      
+      });
       pathDangerIndex = pathCrimeIndexSum/pathCASet.size;
       console.log("zones on path ",pathCASet," Danger Index of Path = "+pathDangerIndex);
       }
@@ -521,69 +119,47 @@
       map.setLayoutProperty("theBox", "visibility", "none");
 
       if (counter > maxAttempts) {
-        noRoutes(reports);
+        showResult(reports);
       } else {
         // Make each route visible
         routes.forEach(e => {
           // Make each route visible
           map.setLayoutProperty("theRoute", "visibility", "visible");
           map.setLayoutProperty("theBox", "visibility", "visible");
-          
           // Get GeoJson LineString feature of route
           var routeLine = polyline.toGeoJSON(e.geometry);
-          // var intersects = turf.lineIntersect(obstacle, routeLine); //
-
           // Create a bounding box around this route
           // The app will find a random point in the new bbox
           bbox = turf.bbox(routeLine);
           polygon = turf.bboxPolygon(bbox);
-          
           // Update the data for the route
           // This will update the route line on the map
           map.getSource("theRoute").setData(routeLine);
-          
           // Update the box
           map.getSource("theBox").setData(polygon);
-          
-          // var clear = turf.booleanDisjoint(obstacle, routeLine);
-          
-          // if (clear == true) {
-          //   collision = "does not intersect any obstacles!";
-          //   detail = "takes " + (e.duration / 60).toFixed(0) + " minutes and avoids";
-          //   emoji =  "✔️";
-          //   map.setPaintProperty("theRoute", "line-color", "#74c476");
-          //   // Hide the box
-          //   map.setLayoutProperty("theBox", "visibility", "none");
-          //   // Reset the counter
-          //   counter = 0;
-          // } else {
-            // Collision occurred, so increment the counter
-            counter = counter + 1;
-            // As the attempts increase, expand the search area
-            // by a factor of the attempt count
-            polygon = turf.transformScale(polygon, counter * 0.02);  //updates prior 0.01
-            bbox = turf.bbox(polygon);
-            
-            collision = "";
-            detail =
-              "takes " + (e.duration / 60).toFixed(0) + " minutes and danger index is "+pathDangerIndex;
-            emoji = "✔️";
-            map.setPaintProperty("theRoute", "line-color", "#de2d26");
-            
-            // Add a randomly selected waypoint to get a new route from the Directions API
-            var randomWaypoint = turf.randomPoint(1, { bbox: bbox });
-            directions.setWaypoint(0, randomWaypoint["features"][0].geometry.coordinates);
-          // };
+          counter = counter + 1;
+          // As the attempts increase, expand the search area
+          // by a factor of the attempt count
+          polygon = turf.transformScale(polygon, counter * 0.02);  //updates prior 0.01
+          bbox = turf.bbox(polygon);
+          detail = "takes " + (e.duration / 60).toFixed(0) + " minutes and danger index is "+pathDangerIndex;
+          emoji = "✔️";
+          map.setPaintProperty("theRoute", "line-color", "#de2d26");
+          // Add a selected waypoint to get a new route from the Directions API
+          var randomWaypoint = turf.randomPoint(1, { bbox: bbox });
+          directions.setWaypoint(0, randomWaypoint["features"][0].geometry.coordinates);
           //  Add a new report section to the sidebar
-            addCard(counter, reports, true, detail);
-            finalPathSet.push({
+          addCard(counter, reports, detail);
+          finalPathSet.push({
               "routeGeometry" : routeLine,
               "routeTime" : (e.duration / 60).toFixed(0),
               "routeDangerIndex" : pathDangerIndex,
               "routeDistance" : (e.distance / 1000)   
-            })
+          })
         })
       }
+      // map.setLayoutProperty("theRoute", "visibility", "none");
+      // map.setLayoutProperty("theBox", "visibility", "none");
     });
   </script>
 
