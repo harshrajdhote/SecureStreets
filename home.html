@@ -294,7 +294,7 @@
   //cluster 5
   CACrimeIndexMapping.set(24,6);
 
-
+  console.log(CACrimeIndexMapping);
 
 
 
@@ -322,6 +322,7 @@
         // console.log("result",zoneSet);
 
       });
+
       return zoneSet;
     }
 
@@ -393,7 +394,16 @@
       var reports = document.getElementById("reports");
       var routes = e.route;
       // console.log(routes.geometries);
-      getRouteCost(polyline.decode(routes[0].geometry)); //getRouteCost
+      let pathCASet = getRouteCost(polyline.decode(routes[0].geometry)); //getRouteCost
+      let pathCrimeIndexSum = 0;
+      console.log(pathCrimeIndexSum);
+      pathCASet.forEach((pathCA) => {
+        pathCrimeIndexSum += CACrimeIndexMapping.get(+pathCA);
+        // console.log( CACrimeIndexMapping.get(+(pathCA)))
+        });
+      
+      let pathDangerIndex = pathCrimeIndexSum/pathCASet.size;
+      console.log("zones on path ",pathCASet," Danger Index of Path = "+pathDangerIndex);
       // Hide the route and box by setting the opacity to zero
       map.setLayoutProperty("theRoute", "visibility", "none");
       map.setLayoutProperty("theBox", "visibility", "none");
