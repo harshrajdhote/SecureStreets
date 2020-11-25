@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8" />
+<title>Add a geocoder</title>
+<meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no" />
+<script src="https://api.mapbox.com/mapbox-gl-js/v1.12.0/mapbox-gl.js"></script>
+<link href="https://api.mapbox.com/mapbox-gl-js/v1.12.0/mapbox-gl.css" rel="stylesheet" />
+<style>
+	body { margin: 0; padding: 0; }
+	#map { position: absolute; top: 0; bottom: 0; width: 100%; }
+</style>
+</head>
+<body>
+<script src="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v4.5.1/mapbox-gl-geocoder.min.js"></script>
+<link
+    rel="stylesheet"
+    href="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v4.5.1/mapbox-gl-geocoder.css"
+    type="text/css"
+/>
+<!-- Promise polyfill script required to use Mapbox GL Geocoder in IE 11 -->
+<script src="https://cdn.jsdelivr.net/npm/es6-promise@4/dist/es6-promise.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/es6-promise@4/dist/es6-promise.auto.min.js"></script>
+<div id="map"></div>
+
+<script>
+	mapboxgl.accessToken = 'pk.eyJ1IjoiZGhvdGVoYXJzaHJhaiIsImEiOiJjanczczFxdmQwaWxqNDhxcTA5dXF2NDNsIn0.SpRrT-_v7oylFpY96UG34Q';
+    var map = new mapboxgl.Map({
+        container: 'map',
+        style: 'mapbox://styles/mapbox/streets-v11',
+        center: [-79.4512, 43.6568],
+        zoom: 13
+    });
+
+    map.addControl(
+        new MapboxGeocoder({
+            accessToken: mapboxgl.accessToken,
+            mapboxgl: mapboxgl
+        })
+    );
+
+    map.on('load', function () {
+        map.addSource('maine', {
+            'type': 'geojson',
+            'data': {
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {},
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              74.59912061691284,
+              16.844140674786015
+            ],
+            [
+              74.59877729415894,
+              16.84294952133626
+            ],
+            [
+              74.59882020950317,
+              16.84184050966112
+            ],
+            [
+              74.59976434707642,
+              16.84099847793826
+            ],
+            [
+              74.60135221481323,
+              16.840875253469505
+            ],
+            [
+              74.60272550582886,
+              16.841614599078763
+            ],
+            [
+              74.60298299789429,
+              16.84245662806067
+            ],
+            [
+              74.60225343704224,
+              16.843832618578087
+            ],
+            [
+              74.60289716720581,
+              16.844469267521742
+            ],
+            [
+              74.60259675979614,
+              16.845208599091038
+            ],
+            [
+              74.6015453338623,
+              16.84555772688358
+            ],
+            [
+              74.59980726242065,
+              16.845126451281548
+            ],
+            [
+              74.59914207458496,
+              16.8445103415736
+            ],
+            [
+              74.59912061691284,
+              16.844140674786015
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {},
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              74.56283569335938,
+              16.88176083323699
+            ],
+            [
+              74.5700454711914,
+              16.793366249539858
+            ],
+            [
+              74.61811065673828,
+              16.775287931235802
+            ],
+            [
+              74.64797973632812,
+              16.799611086828403
+            ],
+            [
+              74.64900970458984,
+              16.870262016138234
+            ],
+            [
+              74.66754913330078,
+              16.927749094480117
+            ],
+            [
+              74.40216064453125,
+              16.99638209145678
+            ],
+            [
+              74.27032470703125,
+              16.92544994794521
+            ],
+            [
+              74.0863037109375,
+              16.599345725849386
+            ],
+            [
+              74.29779052734375,
+              16.520365912442116
+            ],
+            [
+              74.454345703125,
+              16.707232312927637
+            ],
+            [
+              74.49005126953124,
+              16.817687088808363
+            ],
+            [
+              74.56283569335938,
+              16.88176083323699
+            ]
+          ]
+        ]
+      }
+    }
+  ]
+}
+        });
+        map.addLayer({
+            'id': 'maine',
+            'type': 'fill',
+            'source': 'maine',
+            'layout': {},
+            'paint': {
+                'fill-color': '#088',
+                'fill-opacity': 0.8
+            }
+        });
+    });
+</script>
+
+</body>
+</html>

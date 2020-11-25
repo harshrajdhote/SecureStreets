@@ -1,0 +1,58 @@
+body {
+    margin: 0;
+    padding: 0;
+  }
+
+  #map {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 100%;
+  }
+  
+  .sidebar {
+    position: absolute;
+    margin: 20px 20px 30px 20px;
+    width: 25%;
+    top: 0;
+    bottom: 0;
+    padding: 20px;
+    background-color:#1d1c1c;
+    color: #D3D3D3;
+    overflow-y: scroll;
+    font-family: Open Sans, sans-serif;
+  }
+  
+  .card {
+    display: inline-block;
+    font-size: small;
+    border-bottom: solid #1d1c1c 2px;
+    margin-bottom: 6px;
+    width: 100%;
+  }
+  
+  .card-header {
+    font-weight: bold;
+    padding: 6px;
+    font-weight: bold;
+  }
+
+  .no-route {
+    background-color: #D3D3D3;
+    color: #ff0000;
+    
+  }
+
+  .obstacle-found {
+    background-color: #D3D3D3;
+    color: #FFFFFF;
+  }
+
+  .route-found {
+    background-color: #33A532;
+    color: #FFFFFF;
+  }
+  
+  .card-details {
+    padding: 3px 6px;
+  }
