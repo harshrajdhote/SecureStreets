@@ -43,7 +43,8 @@
       style: "mapbox://styles/mapbox/dark-v10", // Specify which map style to use
       center: [-87.746010,41.812267], // Specify the starting position [lng, lat]
       zoom: 10 ,// Specify the starting zoom
-      geometries: "geojson"
+      geometries: "geojson",
+      // maxBounds : [[-94.192919,46.980252],[-86.585303,36.597889]]
     });
     
     var directions = new MapboxDirections({
@@ -294,6 +295,9 @@
   //cluster 5
   CACrimeIndexMapping.set(24,6);
 
+  //Not found case
+  CACrimeIndexMapping.set(-1,3);
+
   console.log(CACrimeIndexMapping);
 
 
@@ -330,7 +334,7 @@
 
     
     var counter = 0;
-    var maxAttempts = 5;
+    var maxAttempts = 50;
     var emoji = '';
     var collision = '';
     
@@ -397,6 +401,7 @@
       let pathCASet = getRouteCost(polyline.decode(routes[0].geometry)); //getRouteCost
       let pathCrimeIndexSum = 0;
       console.log(pathCrimeIndexSum);
+      if(pathCASet.size != 0){
       pathCASet.forEach((pathCA) => {
         pathCrimeIndexSum += CACrimeIndexMapping.get(+pathCA);
         // console.log( CACrimeIndexMapping.get(+(pathCA)))
@@ -404,6 +409,11 @@
       
       let pathDangerIndex = pathCrimeIndexSum/pathCASet.size;
       console.log("zones on path ",pathCASet," Danger Index of Path = "+pathDangerIndex);
+      }
+      else
+      {
+        console.log("path is not passing through any zone");
+      }
       // Hide the route and box by setting the opacity to zero
       map.setLayoutProperty("theRoute", "visibility", "none");
       map.setLayoutProperty("theBox", "visibility", "none");
