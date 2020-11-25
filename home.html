@@ -204,6 +204,103 @@
 
 
 // User defined Section
+
+   let CADangerIndexMapping = new Map();
+   //cluster 0
+   CADangerIndexMapping.set(4,1);
+   CADangerIndexMapping.set(8,1);
+   CADangerIndexMapping.set(9,1);
+   CADangerIndexMapping.set(10,1);
+   CADangerIndexMapping.set(11,1);
+   CADangerIndexMapping.set(12,1);
+   CADangerIndexMapping.set(17,1);
+   CADangerIndexMapping.set(19,1);
+   CADangerIndexMapping.set(33,1);
+   CADangerIndexMapping.set(35,1);
+   CADangerIndexMapping.set(36,1);
+   CADangerIndexMapping.set(38,1);
+   CADangerIndexMapping.set(40,1);
+   CADangerIndexMapping.set(44,1);
+   CADangerIndexMapping.set(46,1);
+   CADangerIndexMapping.set(47,1);
+   CADangerIndexMapping.set(49,1);
+   CADangerIndexMapping.set(51,1);
+   CADangerIndexMapping.set(53,1);
+   CADangerIndexMapping.set(54,1);
+   CADangerIndexMapping.set(56,1);
+   CADangerIndexMapping.set(58,1);
+   CADangerIndexMapping.set(59,1);
+   CADangerIndexMapping.set(61,1);
+   CADangerIndexMapping.set(63,1);
+   CADangerIndexMapping.set(71,1);
+   CADangerIndexMapping.set(73,1);
+   CADangerIndexMapping.set(74,1);
+   //cluster 1
+   CADangerIndexMapping.set(22,5);
+   CADangerIndexMapping.set(25,5);
+   CADangerIndexMapping.set(28,5);
+   CADangerIndexMapping.set(42,5);
+   CADangerIndexMapping.set(48,5);
+   CADangerIndexMapping.set(66,5);
+   CADangerIndexMapping.set(67,5);
+   CADangerIndexMapping.set(68,5);
+   CADangerIndexMapping.set(70,5);
+
+  //cluster 2
+  CADangerIndexMapping.set(18,3);
+  CADangerIndexMapping.set(21,3);
+  CADangerIndexMapping.set(23,3);
+  CADangerIndexMapping.set(26,3);
+  CADangerIndexMapping.set(29,3);
+  CADangerIndexMapping.set(43,3);
+  CADangerIndexMapping.set(45,3);
+  CADangerIndexMapping.set(52,3);
+  CADangerIndexMapping.set(60,3);
+  CADangerIndexMapping.set(65,3);
+
+  //cluster 3
+  CADangerIndexMapping.set(0,2);
+  CADangerIndexMapping.set(1,2);
+  CADangerIndexMapping.set(2,2);
+  CADangerIndexMapping.set(3,2);
+  CADangerIndexMapping.set(6,2);
+  CADangerIndexMapping.set(13,2);
+  CADangerIndexMapping.set(14,2);
+  CADangerIndexMapping.set(15,2);
+  CADangerIndexMapping.set(16,2);
+  CADangerIndexMapping.set(20,2);
+  CADangerIndexMapping.set(30,2);
+  CADangerIndexMapping.set(32,2);
+  CADangerIndexMapping.set(34,2);
+  CADangerIndexMapping.set(37,2);
+  CADangerIndexMapping.set(39,2);
+  CADangerIndexMapping.set(41,2);
+  CADangerIndexMapping.set(50,2);
+  CADangerIndexMapping.set(55,2);
+  CADangerIndexMapping.set(57,2);
+  CADangerIndexMapping.set(62,2);
+  CADangerIndexMapping.set(64,2);
+  CADangerIndexMapping.set(69,2);
+  CADangerIndexMapping.set(72,2);
+  CADangerIndexMapping.set(75,2);
+  CADangerIndexMapping.set(76,2);
+
+  //cluster 4
+  CADangerIndexMapping.set(5,4);
+  CADangerIndexMapping.set(7,4);
+  CADangerIndexMapping.set(27,4);
+  CADangerIndexMapping.set(31,4);
+
+  //cluster 5
+  CADangerIndexMapping.set(24,6);
+
+
+
+
+
+
+
+
    let zonePolyListFile;
    jQuery.getJSON("https://raw.githubusercontent.com/harshrajdhote/Node_Rest_APIs/master/Boundaries%20-%20Community%20Areas%20(current).geojson",(data)=>{
     zonePolyListFile = data;
