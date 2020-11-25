@@ -26,9 +26,7 @@ df['Date'].replace('  ', np.nan, inplace=True)
 df= df.dropna(subset=['Date'])
 #print(df.head())
 df['Date']= pd.to_datetime(df['Date'])
-#print(df['Date'].head(20))
-
-# print(df.Date.dtypes)
+(df.Date.dtypes)
 # print(df['Date'].head())
 #Remove duplicates across all rows
 
