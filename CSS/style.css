@@ -18,8 +18,8 @@ body {
     bottom: 0;
     padding: 20px;
     background-color:#1d1c1c;
-    color: #D3D3D3;
-    overflow-y: scroll;
+    color: #FFFFFF;
+    overflow-y: auto;
     font-family: Open Sans, sans-serif;
   }
   
@@ -29,6 +29,7 @@ body {
     border-bottom: solid #1d1c1c 2px;
     margin-bottom: 6px;
     width: 100%;
+    font-weight: 600;
   }
   
   .card-header {

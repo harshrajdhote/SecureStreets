@@ -19,90 +19,24 @@ var directions = new MapboxDirections({
   controls: { instructions: false },
   flyTo: false
 });
+ 
 
+map.addControl(
+  new mapboxgl.GeolocateControl({
+  positionOptions: {
+  enableHighAccuracy: true
+  },
+  trackUserLocation: true
+  })
+  );
 
 // Map controls & layers section
 
 map.addControl(directions, "top-right");
 map.scrollZoom.enable();
 
-var clearances = {
-  type: "FeatureCollection",
-  features: [
-    {
-      type: "Feature",
-      geometry: {
-        type: "Point",
-        coordinates: [-84.47426, 38.06673],
-      },
-      properties: {
-        clearance: "13' 2",
-      },
-    },
-    {
-      type: "Feature",
-      geometry: {
-        type: "Point",
-        coordinates: [-84.47208, 38.06694],
-      },
-      properties: {
-        clearance: "13' 7",
-      },
-    },
-    {
-      type: "Feature",
-      geometry: {
-        type: "Point",
-        coordinates: [-84.60485, 38.12184],
-      },
-      properties: {
-        clearance: "13' 7",
-      },
-    },
-    {
-      type: "Feature",
-      geometry: {
-        type: "Point",
-        coordinates: [-84.61905, 37.87504],
-      },
-      properties: {
-        clearance: "12' 0",
-      },
-    },
-    {
-      type: "Feature",
-      geometry: {
-        type: "Point",
-        coordinates: [-84.55946, 38.30213],
-      },
-      properties: {
-        clearance: "13' 6",
-      },
-    },
-    {
-      type: "Feature",
-      geometry: {
-        type: "Point",
-        coordinates: [-84.27235, 38.04954],
-      },
-      properties: {
-        clearance: "13' 6",
-      },
-    },
-    {
-      type: "Feature",
-      geometry: {
-        type: "Point",
-        coordinates: [-84.27264, 37.82917],
-      },
-      properties: {
-        clearance: "11' 6",
-      },
-    }
-  ]
-};
 
-// var obstacle = turf.buffer(clearances, 0.25, { units: "kilometers" });
+
 var bbox = [0, 0, 0, 0];
 var polygon = turf.bboxPolygon(bbox);
 
@@ -147,8 +81,8 @@ map.addSource("BestRouteGreen", {     //green route
    },
    paint: {
      "line-color": "#008000",
-     "line-opacity": 0.5,
-     "line-width": 13,
+     "line-opacity": 0.9,
+     "line-width": 15,
      "line-blur": 0.5,
    },
  });

@@ -3,7 +3,7 @@
 
 <head>
   <meta charset="utf-8" />
-  <title>SafeStreets</title>
+  <title>SecureStreets</title>
   <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no" />
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 
@@ -43,7 +43,7 @@
 
 // User defined Section
     var counter = 0;
-    var maxAttempts = 3; //possible path set
+    var maxAttempts = 6; //possible path set
     var emoji = '⚠️';
     
     var addCard = function(id, element, detail) {
@@ -71,7 +71,7 @@
       function(path1,path2) {          
       if (path1.routeDangerIndex === path2.routeDangerIndex) {
          // danger index is only important when path are the same
-         return path1.routeDistance - path2.routeDistance;
+         return path1.routeDistance - path2.routeDistance;            //make it time
       }
       return path1.routeDangerIndex > path2.routeDangerIndex ? 1 : -1;
       });  //custom sort
@@ -87,6 +87,14 @@
       addCard(3, reports, "takes " + finalPathSet[2].routeTime + " minutes and danger index is "+finalPathSet[2].routeDangerIndex);
       addCard(2, reports, "takes " + finalPathSet[1].routeTime + " minutes and danger index is "+finalPathSet[1].routeDangerIndex);
       addCard(1, reports, "takes " + finalPathSet[0].routeTime + " minutes and danger index is "+finalPathSet[0].routeDangerIndex);  
+      console.log(reports);
+
+      reports.children[0].style.backgroundColor = "green";
+      reports.children[1].style.backgroundColor = "yellow";
+      reports.children[2].style.background = "red";
+      // document.getElementsByClassName("route-found")[0].backgroundColor = "green";
+      // document.getElementsByClassName("route-found")[1].backgroundColor = "yellow";
+      // document.getElementsByClassName("route-found")[2].backgroundColor = "red";
     };
     
     directions.on("clear", function() {
@@ -121,19 +129,13 @@
       if (counter > maxAttempts) {
         showResult(reports);
       } else {
-        // Make each route visible
         routes.forEach(e => {
-          // Make each route visible
           map.setLayoutProperty("theRoute", "visibility", "visible");
           map.setLayoutProperty("theBox", "visibility", "visible");
-          // Get GeoJson LineString feature of route
           var routeLine = polyline.toGeoJSON(e.geometry);
           // Create a bounding box around this route
-          // The app will find a random point in the new bbox
           bbox = turf.bbox(routeLine);
           polygon = turf.bboxPolygon(bbox);
-          // Update the data for the route
-          // This will update the route line on the map
           map.getSource("theRoute").setData(routeLine);
           // Update the box
           map.getSource("theBox").setData(polygon);
@@ -146,8 +148,8 @@
           emoji = "✔️";
           map.setPaintProperty("theRoute", "line-color", "#de2d26");
           // Add a selected waypoint to get a new route from the Directions API
-          var randomWaypoint = turf.randomPoint(1, { bbox: bbox });
-          directions.setWaypoint(0, randomWaypoint["features"][0].geometry.coordinates);
+          var newWaypoint = turf.randomPoint(1, { bbox: bbox });
+          directions.setWaypoint(0, newWaypoint["features"][0].geometry.coordinates);
           //  Add a new report section to the sidebar
           addCard(counter, reports, detail);
           finalPathSet.push({
